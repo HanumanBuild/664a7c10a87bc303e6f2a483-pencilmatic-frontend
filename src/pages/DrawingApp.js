@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { fabric } from 'fabric';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
@@ -6,13 +6,16 @@ import { useHistory } from 'react-router-dom';
 const DrawingApp = () => {
   const canvasRef = useRef(null);
   const history = useHistory();
+  const [canvas, setCanvas] = useState(null);
+  const [isDrawingMode, setIsDrawingMode] = useState(true);
 
   useEffect(() => {
-    const canvas = new fabric.Canvas(canvasRef.current);
-    canvas.isDrawingMode = true;
+    const initCanvas = new fabric.Canvas(canvasRef.current);
+    initCanvas.isDrawingMode = true;
+    setCanvas(initCanvas);
 
     const saveDrawing = async () => {
-      const drawing = canvas.toDataURL();
+      const drawing = initCanvas.toDataURL();
       try {
         await axios.post(
           `${process.env.REACT_APP_PENCILMATIC_BACKEND_URL}/api/drawings`,
@@ -40,8 +43,8 @@ const DrawingApp = () => {
           img.src = res.data[0].drawing;
           img.onload = () => {
             const fabricImg = new fabric.Image(img);
-            canvas.add(fabricImg);
-            canvas.renderAll();
+            initCanvas.add(fabricImg);
+            initCanvas.renderAll();
           };
         }
       } catch (err) {
@@ -56,10 +59,32 @@ const DrawingApp = () => {
     };
   }, [history]);
 
+  const handleClearCanvas = () => {
+    canvas.clear();
+  };
+
+  const handleToggleDrawingMode = () => {
+    setIsDrawingMode(!isDrawingMode);
+    canvas.isDrawingMode = !canvas.isDrawingMode;
+  };
+
+  const handleEraseMode = () => {
+    canvas.freeDrawingBrush = new fabric.EraserBrush(canvas);
+    canvas.isDrawingMode = true;
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded shadow-md w-full max-w-4xl">
         <h1 className="text-2xl font-bold mb-6">Drawing App</h1>
+        <div className="mb-4">
+          <button onClick={handleToggleDrawingMode} className="bg-blue-500 text-white p-2 rounded mr-2">
+            {isDrawingMode ? 'Switch to Erase Mode' : 'Switch to Draw Mode'}
+          </button>
+          <button onClick={handleClearCanvas} className="bg-red-500 text-white p-2 rounded">
+            Clear Canvas
+          </button>
+        </div>
         <canvas ref={canvasRef} width={800} height={600} className="border border-gray-300"></canvas>
       </div>
     </div>
