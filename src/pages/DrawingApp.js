@@ -74,18 +74,20 @@ const DrawingApp = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-md w-full max-w-4xl">
-        <h1 className="text-2xl font-bold mb-6">Drawing App</h1>
-        <div className="mb-4">
-          <button onClick={handleToggleDrawingMode} className="bg-blue-500 text-white p-2 rounded mr-2">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-purple-400 to-pink-500">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-4xl">
+        <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">Drawing App</h1>
+        <div className="mb-4 flex justify-center">
+          <button onClick={handleToggleDrawingMode} className="bg-blue-500 text-white p-2 rounded mr-2 hover:bg-blue-600 transition duration-200">
             {isDrawingMode ? 'Switch to Erase Mode' : 'Switch to Draw Mode'}
           </button>
-          <button onClick={handleClearCanvas} className="bg-red-500 text-white p-2 rounded">
+          <button onClick={handleClearCanvas} className="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition duration-200">
             Clear Canvas
           </button>
         </div>
-        <canvas ref={canvasRef} width={800} height={600} className="border border-gray-300"></canvas>
+        <div className="flex justify-center">
+          <canvas ref={canvasRef} width={800} height={600} className="border border-gray-300"></canvas>
+        </div>
       </div>
     </div>
   );
